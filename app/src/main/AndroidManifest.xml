@@ -14,15 +14,25 @@
         android:theme="@style/Theme.AirQualityExcercise"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name="com.matteozajac.airqualityexcercise.ui.aqList.AqListActivity"
             android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.AirQualityExcercise">
+            android:theme="@style/Theme.AppCompat">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name="com.matteozajac.airqualityexcercise.ui.mvpSample.MVPActivity"
+            android:exported="true"
+            android:theme="@style/Theme.AppCompat">
+        </activity>
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.AirQualityExcercise">
         </activity>
     </application>
 
