@@ -1,19 +1,21 @@
 package com.matteozajac.airqualityexcercise.ui.aqList
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.matteozajac.airqualityexcercise.entities.AQStation
 import com.matteozajac.airqualityexcercise.presentation.aqList.AQListViewModel
@@ -26,32 +28,17 @@ class AqListActivity : ComponentActivity() {
 
     val viewmodel: AQListViewModel by viewModels()
 
+    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent {
-            val scrollableState = rememberScrollState()
-
             AirQualityExcerciseTheme {
                 Scaffold(
                     Modifier
                         .background(MaterialTheme.colorScheme.surface)
-                ) { padding ->
-                    Column(
-                        Modifier
-                            .padding(horizontal = 16.dp)
-                            .verticalScroll(
-                                state = scrollableState
-                            )) {
-
-                        Spacer(Modifier.height(120.dp))
-
-                        viewmodel.getStations().value?.forEach { station ->
-                            AQListItem(station)
-                        }
-
-                        Text("This is the end...")
-                    }
+                ) {
+                    AQListView(viewModel = viewmodel)
                 }
             }
         }
@@ -67,5 +54,49 @@ class AqListActivity : ComponentActivity() {
                 .background(MaterialTheme.colorScheme.surface)
                 .padding(16.dp)
         )
+    }
+
+    @Composable
+    fun AQListView(viewModel: AQListViewModel) {
+        val scrollableState = rememberScrollState()
+        val state by viewModel.state.collectAsState()
+        Column(
+            Modifier
+                .padding(horizontal = 16.dp)
+                .verticalScroll(
+                    state = scrollableState
+                )) {
+
+            Spacer(Modifier.height(120.dp))
+            when (state) {
+                AQListViewModel.UIState.Initial -> {
+                    Text(text = "Initial")
+                }
+                AQListViewModel.UIState.Loading -> {
+                    Box(modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
+                    }
+                }
+                is AQListViewModel.UIState.Success -> {
+                    val stations = (state as AQListViewModel.UIState.Success).value
+                    stations.forEach { station ->
+                        AQListItem(station)
+                    }
+                }
+                is AQListViewModel.UIState.Failure -> {
+                    Text(text = "Error")
+                }
+            }
+
+
+            Text("This is the end...")
+        }
+    }
+
+    @Preview
+    @Composable
+    fun AQListScreenPreview() {
+
     }
 }

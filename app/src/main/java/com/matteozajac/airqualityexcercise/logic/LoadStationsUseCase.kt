@@ -2,16 +2,17 @@ package com.matteozajac.airqualityexcercise.logic
 
 import com.matteozajac.airqualityexcercise.entities.AQStation
 import kotlinx.coroutines.delay
+import java.lang.Exception
 import javax.inject.Inject
 import javax.inject.Singleton
 
 interface LoadStationsUseCase {
-    fun execute(): List<AQStation>
+    suspend fun execute(): List<AQStation>
 }
 
 @Singleton
 class FakeStationsInteractor @Inject constructor() : LoadStationsUseCase {
-    override fun execute(): List<AQStation> {
+    override suspend fun execute(): List<AQStation> {
         return emptyList<AQStation>()
     }
 }
@@ -19,7 +20,8 @@ class FakeStationsInteractor @Inject constructor() : LoadStationsUseCase {
 
 @Singleton
 class LoadStationsInteractor @Inject constructor() : LoadStationsUseCase {
-    override fun execute(): List<AQStation> {
+    override suspend fun execute(): List<AQStation> {
+      delay(3000)
         return listOf(
             AQStation("Warszawa"),
             AQStation("Krakow Mikoljaksa"),
