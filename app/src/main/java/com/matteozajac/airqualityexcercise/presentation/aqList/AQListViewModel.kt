@@ -1,15 +1,18 @@
-package com.matteozajac.airqualityexcercise.presentation.mvpSample.aqlist
+package com.matteozajac.airqualityexcercise.presentation.aqList
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.matteozajac.airqualityexcercise.entities.AQStation
 import com.matteozajac.airqualityexcercise.logic.LoadStationsUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class AQListViewModel : ViewModel() {
-    private val loadStationsUseCase = LoadStationsUseCase()
+@HiltViewModel
+class AQListViewModel @Inject constructor(private val loadStationsUseCase: LoadStationsUseCase) : ViewModel() {
     private val stations: MutableLiveData<List<AQStation>> by lazy {
-
         MutableLiveData<List<AQStation>>().also {
             it.value = loadStationsUseCase.execute()
         }
@@ -17,9 +20,5 @@ class AQListViewModel : ViewModel() {
 
     fun getStations(): LiveData<List<AQStation>> {
         return stations
-    }
-
-    fun onLoadButtonClicked() {
-
     }
 }
