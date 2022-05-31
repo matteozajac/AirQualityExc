@@ -45,7 +45,6 @@ class AirlyRemoteAQStationsDataSource @Inject constructor() : RemoteAQStationsDa
     }
 }
 
-
 @Singleton
 class StaticLocalAQStationsDataSource @Inject constructor() : LocalAQStationsDataSource {
     override fun getAll(): List<AQStation> {
