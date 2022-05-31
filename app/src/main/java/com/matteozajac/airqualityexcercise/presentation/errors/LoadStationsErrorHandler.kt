@@ -8,8 +8,8 @@ import com.matteozajac.airqualityexcercise.logic.LoadStationsException
 class LoadStationsErrorHandler {
     fun toPresentationError(loadStationsException: LoadStationsException): PresentationException {
         return PresentationException(
-            title = "Some title",
-            message = "Some message",
+            title = "We're having some issues",
+            message = "Please forgive us",
             imageURL = null
         )
     }

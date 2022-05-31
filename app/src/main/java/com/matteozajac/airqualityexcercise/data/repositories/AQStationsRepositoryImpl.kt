@@ -4,10 +4,10 @@ import com.matteozajac.airqualityexcercise.data.local.LocalAQStationsDataSource
 import com.matteozajac.airqualityexcercise.data.remote.RemoteAQStationsDataSource
 import com.matteozajac.airqualityexcercise.entities.AQSponsor
 import com.matteozajac.airqualityexcercise.entities.AQStation
+import com.matteozajac.airqualityexcercise.logic.LoadStationsException
 import com.matteozajac.airqualityexcercise.logic.repositories.AQStationsRepository
 import javax.inject.Inject
 import javax.inject.Singleton
-
 
 @Singleton
 class AQStationsRepositoryImpl @Inject constructor(
@@ -15,9 +15,14 @@ class AQStationsRepositoryImpl @Inject constructor(
     private val localDataSource: LocalAQStationsDataSource,
 ) : AQStationsRepository {
 
-    override fun getAll(): List<AQStation> {
+    override suspend fun getAll(): List<AQStation> {
         return if (localDataSource.getAll().isEmpty()) {
-            val stationsFromRemote = remoteDataSource.getAll()
+            var stationsFromRemote: List<AQStation> = emptyList()
+            try {
+                stationsFromRemote = remoteDataSource.getAll()
+            } catch (e: Exception) {
+                throw LoadStationsException.InvalidData
+            }
             try {
                 localDataSource.store(stationsFromRemote)
             } catch (e: Exception) {
@@ -39,15 +44,7 @@ class AQStationsRepositoryImpl @Inject constructor(
 @Singleton
 class StaticLocalAQStationsDataSource @Inject constructor() : LocalAQStationsDataSource {
     override fun getAll(): List<AQStation> {
-        return listOf(
-            AQStation(
-                name = "Warszawa",
-                sponsor = AQSponsor(
-                    name = "Jacek",
-                    logoURL = ""
-                )
-            )
-        )
+        return emptyList()
     }
 
     override fun store(stations: List<AQStation>) {
