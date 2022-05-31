@@ -45,6 +45,11 @@ class AqListActivity : ComponentActivity() {
                     Modifier
                         .background(MaterialTheme.colorScheme.surface)
                 ) {
+                    Button(onClick = {
+                        viewmodel.loadStations()
+                    }) {
+                        Text(text = "Reload")
+                    }
                     AQListView(viewModel = viewmodel)
                 }
             }

@@ -31,7 +31,7 @@ class AQListViewModel @Inject constructor(private val loadStationsUseCase: LoadS
         loadStations()
     }
 
-    private fun loadStations() = viewModelScope.launch {
+    fun loadStations() = viewModelScope.launch {
         try {
             _state.value = UIState.Loading
             val stations = withContext(Dispatchers.IO) {

@@ -1,5 +1,7 @@
 package com.matteozajac.airqualityexcercise.data.repositories
 
+import com.matteozajac.airqualityexcercise.data.local.LocalAQStationsDataSource
+import com.matteozajac.airqualityexcercise.data.remote.RemoteAQStationsDataSource
 import com.matteozajac.airqualityexcercise.entities.AQSponsor
 import com.matteozajac.airqualityexcercise.entities.AQStation
 import org.junit.Assert.assertTrue
@@ -7,7 +9,8 @@ import org.junit.Test
 
 internal class AQStationsRepositoryImplTest {
 
-    @Test fun localReturnsThreeValues_thenRepositoryReturnsThreeValuesWithoutCallingRemote() {
+    @Test
+    suspend fun localReturnsThreeValues_thenRepositoryReturnsThreeValuesWithoutCallingRemote() {
 
         // Given
         val remoteDS = MockAQStationsRemoteDataSource()
@@ -29,7 +32,8 @@ internal class AQStationsRepositoryImplTest {
         assertTrue(remoteDS.getAllInvocationsCount == 0)
     }
 
-    @Test fun localReturnsZeroValuesAndRemoteReturnFiveValues_thenRepositoryReturnsFiveValues() {
+    @Test
+    suspend fun localReturnsZeroValuesAndRemoteReturnFiveValues_thenRepositoryReturnsFiveValues() {
         //Given
         val remoteDS = MockAQStationsRemoteDataSource()
         remoteDS.receivedList = MutableList(5) { sampleAQStation}
@@ -51,7 +55,8 @@ internal class AQStationsRepositoryImplTest {
         assertTrue(localDS.getAllInvocationsCount == 1)
     }
 
-    @Test fun localDStoreThrowsError() {
+    @Test
+    suspend fun localDStoreThrowsError() {
         //Given remote return five values
         val remoteDS = MockAQStationsRemoteDataSource()
         remoteDS.receivedList = MutableList(5) { sampleAQStation}
@@ -82,7 +87,7 @@ class MockAQStationsRemoteDataSource: RemoteAQStationsDataSource {
     var receivedList: List<AQStation> = emptyList()
     var getAllInvocationsCount: Int = 0
 
-    override fun getAll(): List<AQStation> {
+    override suspend fun getAll(): List<AQStation> {
         getAllInvocationsCount++
         return  receivedList
     }

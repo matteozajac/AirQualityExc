@@ -2,6 +2,7 @@ package com.matteozajac.airqualityexcercise
 
 import com.matteozajac.airqualityexcercise.data.airly.AIRLY_API_BASE_URL
 import com.matteozajac.airqualityexcercise.data.airly.AirlyRemoteAQStationsDataSource
+import com.matteozajac.airqualityexcercise.data.local.InMemoryLocalAQStationsDataSource
 import com.matteozajac.airqualityexcercise.data.local.LocalAQStationsDataSource
 import com.matteozajac.airqualityexcercise.data.remote.RemoteAQStationsDataSource
 import com.matteozajac.airqualityexcercise.data.repositories.*
@@ -46,7 +47,7 @@ class AirQualityDIContainer {
 
         @Binds
         abstract fun bindLocalAQStationsDataSource(
-            localAQStationsDataSource: StaticLocalAQStationsDataSource
+            localAQStationsDataSource: InMemoryLocalAQStationsDataSource
         ): LocalAQStationsDataSource
 
 
@@ -87,7 +88,7 @@ class AirQualityDIContainer {
 }
 
 class AirlyInterceptor: Interceptor {
-    val apiKey = "PASTE_YOUR_KEY_HERE"
+    val apiKey = "LsdA8JBqm6kWfaWg4Q0yFWVo7tIELl5f"
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request().newBuilder()

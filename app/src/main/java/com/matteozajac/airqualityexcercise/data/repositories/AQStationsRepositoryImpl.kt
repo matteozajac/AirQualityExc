@@ -38,15 +38,3 @@ class AQStationsRepositoryImpl @Inject constructor(
         throw  IllegalStateException()
     }
 }
-
-//********************************************************************************************************
-
-@Singleton
-class StaticLocalAQStationsDataSource @Inject constructor() : LocalAQStationsDataSource {
-    override fun getAll(): List<AQStation> {
-        return emptyList()
-    }
-
-    override fun store(stations: List<AQStation>) {
-    }
-}
