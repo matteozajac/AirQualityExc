@@ -1,5 +1,7 @@
 package com.matteozajac.airqualityexcercise.data.repositories
 
+import com.matteozajac.airqualityexcercise.data.local.LocalAQStationsDataSource
+import com.matteozajac.airqualityexcercise.data.remote.RemoteAQStationsDataSource
 import com.matteozajac.airqualityexcercise.entities.AQSponsor
 import com.matteozajac.airqualityexcercise.entities.AQStation
 import com.matteozajac.airqualityexcercise.logic.repositories.AQStationsRepository
@@ -33,22 +35,6 @@ class AQStationsRepositoryImpl @Inject constructor(
 }
 
 //********************************************************************************************************
-
-interface RemoteAQStationsDataSource {
-    fun getAll(): List<AQStation>
-}
-
-interface LocalAQStationsDataSource {
-    fun getAll(): List<AQStation>
-    fun store(stations: List<AQStation>)
-}
-
-@Singleton
-class AirlyRemoteAQStationsDataSource @Inject constructor() : RemoteAQStationsDataSource {
-    override fun getAll(): List<AQStation> {
-        return emptyList<AQStation>()
-    }
-}
 
 @Singleton
 class StaticLocalAQStationsDataSource @Inject constructor() : LocalAQStationsDataSource {

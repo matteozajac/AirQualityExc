@@ -1,5 +1,8 @@
 package com.matteozajac.airqualityexcercise
 
+import com.matteozajac.airqualityexcercise.data.airly.AirlyRemoteAQStationsDataSource
+import com.matteozajac.airqualityexcercise.data.local.LocalAQStationsDataSource
+import com.matteozajac.airqualityexcercise.data.remote.RemoteAQStationsDataSource
 import com.matteozajac.airqualityexcercise.data.repositories.*
 import com.matteozajac.airqualityexcercise.logic.*
 import com.matteozajac.airqualityexcercise.logic.repositories.AQStationsRepository
