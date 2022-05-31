@@ -4,7 +4,6 @@ import android.app.AlertDialog
 import android.content.Context
 import com.matteozajac.airqualityexcercise.logic.LoadStationsException
 
-
 class LoadStationsErrorHandler {
     fun toPresentationError(loadStationsException: LoadStationsException): PresentationException {
         return PresentationException(
@@ -21,7 +20,6 @@ data class PresentationException(
     val imageURL: String?
 )
 
-
 interface ErrorDisplayer {
     fun display(presentationException: PresentationException)
 }
@@ -29,13 +27,11 @@ interface ErrorDisplayer {
 class AlertDialogErrorDisplayer(private val context: Context) : ErrorDisplayer {
     override fun display(presentationException: PresentationException) {
 
-        val builder: AlertDialog.Builder? = context.let {
+        val builder: AlertDialog.Builder = context.let {
             AlertDialog.Builder(it)
         }
 
-        builder?.
-        setTitle(presentationException.title)?.setMessage(presentationException.message)
+        builder.setTitle(presentationException.title)?.setMessage(presentationException.message)
             ?.create()?.show()
-
     }
 }

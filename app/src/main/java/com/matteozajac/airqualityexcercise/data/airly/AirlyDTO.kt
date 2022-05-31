@@ -39,4 +39,18 @@ class AirlyDTO {
         val displayName: String
     )
 
+    data class Measurement(
+        val current: CurrentMeasurement
+    )
+
+    data class CurrentMeasurement(
+        val indexes: List<MeasurementIndex>
+    )
+
+    data class MeasurementIndex(
+        val value: Double,
+        val description: String,
+        val advice: String,
+        val color: String
+    )
 }

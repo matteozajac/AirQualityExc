@@ -10,12 +10,15 @@ interface LoadStationsUseCase {
 }
 
 @Singleton
-class LoadStationsInteractor @Inject constructor(private val aqStationsRepository: AQStationsRepository) : LoadStationsUseCase {
+class LoadStationsInteractor @Inject constructor(
+    private val aqStationsRepository: AQStationsRepository
+) :
+    LoadStationsUseCase {
     override suspend fun execute(): List<AQStation> {
         return aqStationsRepository.getAll()
     }
 }
 
-sealed class LoadStationsException: Exception() {
-    object InvalidData: LoadStationsException()
+sealed class LoadStationsException : Exception() {
+    object InvalidData : LoadStationsException()
 }

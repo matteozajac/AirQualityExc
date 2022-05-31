@@ -97,7 +97,7 @@ class MockLocalDataSource: LocalAQStationsDataSource {
     var receivedList: List<AQStation> = emptyList()
     var getAllInvocationsCount: Int = 0
 
-    override fun getAll(): List<AQStation> {
+    override suspend fun getAll(): List<AQStation> {
         getAllInvocationsCount++
         return  receivedList
     }

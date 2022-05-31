@@ -8,6 +8,7 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -15,6 +16,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.layout
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -27,6 +31,7 @@ import com.matteozajac.airqualityexcercise.presentation.errors.ErrorDisplayer
 import com.matteozajac.airqualityexcercise.presentation.errors.PresentationException
 import com.matteozajac.airqualityexcercise.ui.theme.AirQualityExcerciseTheme
 import dagger.hilt.android.AndroidEntryPoint
+import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @AndroidEntryPoint
@@ -64,6 +69,30 @@ class AqListActivity : ComponentActivity() {
                 .background(MaterialTheme.colorScheme.surface)
                 .padding(16.dp)
         ) {
+
+            Box(contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .background(Color(android.graphics.Color.parseColor(station.caqi.hexColor)), shape = CircleShape)
+                    .layout() { measurable, constraints ->
+                        val placeable = measurable.measure(constraints)
+                        val currentHeight = placeable.height
+                        var heightCircle = currentHeight
+                        if (placeable.width > heightCircle)
+                            heightCircle = placeable.width
+                        layout(heightCircle, heightCircle) {
+                            placeable.placeRelative(0, (heightCircle - currentHeight) / 2)
+                        }
+                    }) {
+
+                Text(
+                    text = "${station.caqi.value.roundToInt()}",
+                    textAlign = TextAlign.Center,
+                    color = androidx.compose.ui.graphics.Color.White,
+                    modifier = Modifier
+                        .padding(5.dp)
+                        .defaultMinSize(16.dp)
+                )
+            }
             Column() {
                 Text(
                     text = station.name,
@@ -73,6 +102,11 @@ class AqListActivity : ComponentActivity() {
                     text = "Sponsored by ${station.sponsor.name}",
                     style = MaterialTheme.typography.bodyMedium
                 )
+                Text(
+                    text = station.caqi.description,
+                    style = MaterialTheme.typography.bodySmall
+                )
+
             }
 
             AsyncImage(
@@ -136,17 +170,4 @@ class AqListActivity : ComponentActivity() {
         }
     }
 
-    @Preview
-    @Composable
-    fun AQListScreenPreview() {
-        AQListItem(
-            station = AQStation(
-                name = "Krakow",
-                sponsor = AQSponsor(
-                    name = "Fryderyk Muras",
-                    logoURL = "https://googlechrome.github.io/samples/picture-element/images/kitten-small.png"
-                )
-            ),
-        )
-    }
 }

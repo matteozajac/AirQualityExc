@@ -13,6 +13,8 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -22,6 +24,7 @@ import okhttp3.ResponseBody.Companion.toResponseBody
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Qualifier
 import javax.inject.Singleton
 
 @InstallIn(SingletonComponent::class)
@@ -76,30 +79,44 @@ class AirQualityDIContainer {
 
     @Provides
     @Singleton
-    fun provideOKHttpClient():OkHttpClient {
+    fun provideOKHttpClient(): OkHttpClient {
         val loggingInterceptor = HttpLoggingInterceptor()
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
         return OkHttpClient.Builder()
-            .addInterceptor(FakeAirlyInterceptor())
-//            .addInterceptor(AirlyInterceptor())
+//            .addInterceptor(FakeAirlyInterceptor())
+            .addInterceptor(AirlyInterceptor())
             .addInterceptor(loggingInterceptor)
             .build()
     }
+
+
 }
 
-class AirlyInterceptor: Interceptor {
-    val apiKey = "LsdA8JBqm6kWfaWg4Q0yFWVo7tIELl5f"
+@Module
+@InstallIn(SingletonComponent::class)
+object DispatcherModule {
+    @IoDispatcher
+    @Provides
+    fun providesIoDispatcher(): CoroutineDispatcher = Dispatchers.IO
+}
+
+@Retention(AnnotationRetention.BINARY)
+@Qualifier
+annotation class IoDispatcher
+
+class AirlyInterceptor : Interceptor {
+    private val apiKey = "###"
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request().newBuilder()
-            .addHeader("Accept","application/json")
+            .addHeader("Accept", "application/json")
             .addHeader("apikey", apiKey)
             .build()
         return chain.proceed(request)
     }
 }
 
-class FakeAirlyInterceptor: Interceptor {
+class FakeAirlyInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         return Response.Builder()
             .code(200)
