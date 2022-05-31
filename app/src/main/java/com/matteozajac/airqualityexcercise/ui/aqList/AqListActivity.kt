@@ -17,9 +17,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
+import com.matteozajac.airqualityexcercise.entities.AQSponsor
 import com.matteozajac.airqualityexcercise.entities.AQStation
 import com.matteozajac.airqualityexcercise.presentation.aqList.AQListViewModel
 import com.matteozajac.airqualityexcercise.presentation.common.UIState
+import com.matteozajac.airqualityexcercise.presentation.errors.AlertDialogErrorDisplayer
+import com.matteozajac.airqualityexcercise.presentation.errors.ErrorDisplayer
+import com.matteozajac.airqualityexcercise.presentation.errors.PresentationException
 import com.matteozajac.airqualityexcercise.ui.theme.AirQualityExcerciseTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -28,11 +33,12 @@ import dagger.hilt.android.AndroidEntryPoint
 class AqListActivity : ComponentActivity() {
 
     val viewmodel: AQListViewModel by viewModels()
+    lateinit var errorDisplayer: ErrorDisplayer
 
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        errorDisplayer = AlertDialogErrorDisplayer(context = this)
         setContent {
             AirQualityExcerciseTheme {
                 Scaffold(
@@ -47,14 +53,31 @@ class AqListActivity : ComponentActivity() {
 
     @Composable
     fun AQListItem(station: AQStation) {
-        Text(
-            text = station.name,
-            style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier
+        Row(
+            Modifier
                 .padding(8.dp)
                 .background(MaterialTheme.colorScheme.surface)
                 .padding(16.dp)
-        )
+        ) {
+            Column() {
+                Text(
+                    text = station.name,
+                    style = MaterialTheme.typography.titleMedium,
+                )
+                Text(
+                    text = "Sponsored by ${station.sponsor.name}",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+            }
+
+            AsyncImage(
+                model = station.sponsor.logoURL,
+                contentDescription = "Logo",
+                modifier = Modifier.size(48.dp)
+            )
+
+        }
+
     }
 
     @Composable
@@ -66,7 +89,8 @@ class AqListActivity : ComponentActivity() {
                 .padding(horizontal = 16.dp)
                 .verticalScroll(
                     state = scrollableState
-                )) {
+                )
+        ) {
 
             Spacer(Modifier.height(120.dp))
             when (state) {
@@ -74,8 +98,10 @@ class AqListActivity : ComponentActivity() {
                     Text(text = "Initial")
                 }
                 UIState.Loading -> {
-                    Box(modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
                         CircularProgressIndicator()
                     }
                 }
@@ -86,7 +112,9 @@ class AqListActivity : ComponentActivity() {
                     }
                 }
                 is UIState.Failure -> {
-                    Text(text = "Error")
+                    val exception = (state as UIState.Failure).exception
+                    errorDisplayer.display(exception)
+                    ErrorView(exception)
                 }
             }
 
@@ -95,9 +123,25 @@ class AqListActivity : ComponentActivity() {
         }
     }
 
+    @Composable
+    fun ErrorView(exception: PresentationException) {
+        Column() {
+            Text(text = exception.title, style = MaterialTheme.typography.titleMedium)
+            exception.message?.let { Text(text = it, style = MaterialTheme.typography.bodyMedium) }
+        }
+    }
+
     @Preview
     @Composable
     fun AQListScreenPreview() {
-
+        AQListItem(
+            station = AQStation(
+                name = "Krakow",
+                sponsor = AQSponsor(
+                    name = "Fryderyk Muras",
+                    logoURL = "https://googlechrome.github.io/samples/picture-element/images/kitten-small.png"
+                )
+            ),
+        )
     }
 }

@@ -1,8 +1,7 @@
 package com.matteozajac.airqualityexcercise.logic
 
 import com.matteozajac.airqualityexcercise.entities.AQStation
-import kotlinx.coroutines.delay
-import java.lang.Exception
+import com.matteozajac.airqualityexcercise.logic.repositories.AQStationsRepository
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -11,35 +10,12 @@ interface LoadStationsUseCase {
 }
 
 @Singleton
-class LoadStationsInteractor @Inject constructor() : LoadStationsUseCase {
+class LoadStationsInteractor @Inject constructor(private val aqStationsRepository: AQStationsRepository) : LoadStationsUseCase {
     override suspend fun execute(): List<AQStation> {
-      delay(3000)
-        return listOf(
-            AQStation("Warszawa"),
-            AQStation("Krakow Mikoljaksa"),
-            AQStation("Wroclaw"),
-            AQStation("Gdansk"),
-            AQStation("Rzeszow"),
-            AQStation("Warszawa"),
-            AQStation("Krakow Mikoljaksa"),
-            AQStation("Wroclaw"),
-            AQStation("Gdansk"),
-            AQStation("Rzeszow"),
-            AQStation("Warszawa"),
-            AQStation("Krakow Mikoljaksa"),
-            AQStation("Wroclaw"),
-            AQStation("Gdansk"),
-            AQStation("Rzeszow"),
-            AQStation("Warszawa"),
-            AQStation("Krakow Mikoljaksa"),
-            AQStation("Wroclaw"),
-            AQStation("Gdansk"),
-            AQStation("Rzeszow"),
-            AQStation("Warszawa"),
-            AQStation("Krakow Mikoljaksa"),
-            AQStation("Wroclaw"),
-            AQStation("Gdansk"),
-            AQStation("Rzeszow"),
-        )
+        return aqStationsRepository.getAll()
     }
+}
+
+sealed class LoadStationsException: Exception() {
+    object InvalidData: LoadStationsException()
 }
