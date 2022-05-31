@@ -4,7 +4,7 @@ import com.matteozajac.airqualityexcercise.logic.LoadDateUseCase
 import org.joda.time.format.DateTimeFormat
 
 //Presenter
-class MvpPresenter(val view: MvpAbstractView) {
+class MvpPresenter(private val view: MvpAbstractView) {
     private val loadDateUseCase = LoadDateUseCase()
 
     fun onLoadButtonClicked() {

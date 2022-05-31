@@ -19,6 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.matteozajac.airqualityexcercise.entities.AQStation
 import com.matteozajac.airqualityexcercise.presentation.aqList.AQListViewModel
+import com.matteozajac.airqualityexcercise.presentation.common.UIState
 import com.matteozajac.airqualityexcercise.ui.theme.AirQualityExcerciseTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -69,22 +70,22 @@ class AqListActivity : ComponentActivity() {
 
             Spacer(Modifier.height(120.dp))
             when (state) {
-                AQListViewModel.UIState.Initial -> {
+                UIState.Initial -> {
                     Text(text = "Initial")
                 }
-                AQListViewModel.UIState.Loading -> {
+                UIState.Loading -> {
                     Box(modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center) {
                         CircularProgressIndicator()
                     }
                 }
-                is AQListViewModel.UIState.Success -> {
-                    val stations = (state as AQListViewModel.UIState.Success).value
+                is UIState.Success -> {
+                    val stations = (state as UIState.Success).value
                     stations.forEach { station ->
                         AQListItem(station)
                     }
                 }
-                is AQListViewModel.UIState.Failure -> {
+                is UIState.Failure -> {
                     Text(text = "Error")
                 }
             }

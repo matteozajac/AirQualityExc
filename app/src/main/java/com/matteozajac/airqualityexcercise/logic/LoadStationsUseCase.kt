@@ -11,14 +11,6 @@ interface LoadStationsUseCase {
 }
 
 @Singleton
-class FakeStationsInteractor @Inject constructor() : LoadStationsUseCase {
-    override suspend fun execute(): List<AQStation> {
-        return emptyList<AQStation>()
-    }
-}
-
-
-@Singleton
 class LoadStationsInteractor @Inject constructor() : LoadStationsUseCase {
     override suspend fun execute(): List<AQStation> {
       delay(3000)

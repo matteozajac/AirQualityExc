@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.matteozajac.airqualityexcercise.entities.AQStation
 import com.matteozajac.airqualityexcercise.logic.LoadStationsUseCase
+import com.matteozajac.airqualityexcercise.presentation.common.UIState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,7 +23,6 @@ class AQListViewModel @Inject constructor(private val loadStationsUseCase: LoadS
 
     init {
         loadStations()
-
     }
 
     private fun loadStations() = viewModelScope.launch {
@@ -39,13 +39,5 @@ class AQListViewModel @Inject constructor(private val loadStationsUseCase: LoadS
             _state.value = UIState.Failure("Wystapil blad")
 
         }
-    }
-
-    sealed class UIState<out T : Any> {
-        object Initial : UIState<Nothing>()
-        object Loading : UIState<Nothing>()
-
-        data class Success<out T : Any>(val value: T) : UIState<T>()
-        data class Failure(val message: String) : UIState<Nothing>()
     }
 }
