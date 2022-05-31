@@ -11,20 +11,10 @@ internal class AQStationsRepositoryImplTest {
 
         // Given
         val remoteDS = MockAQStationsRemoteDataSource()
-        remoteDS.receivedList = listOf(
-            sampleAQStation,
-            sampleAQStation,
-            sampleAQStation,
-            sampleAQStation,
-            sampleAQStation
-        )
+        remoteDS.receivedList = MutableList(5) { sampleAQStation}
 
         val localDS = MockLocalDataSource()
-        localDS.receivedList = listOf(
-            sampleAQStation,
-            sampleAQStation,
-            sampleAQStation
-        )
+        localDS.receivedList = MutableList(3) { sampleAQStation }
 
         val sut = AQStationsRepositoryImpl(
             remoteDataSource = remoteDS,
@@ -37,6 +27,53 @@ internal class AQStationsRepositoryImplTest {
         // Then
         assertTrue(actual.count() == 3)
         assertTrue(remoteDS.getAllInvocationsCount == 0)
+    }
+
+    @Test fun localReturnsZeroValuesAndRemoteReturnFiveValues_thenRepositoryReturnsFiveValues() {
+        //Given
+        val remoteDS = MockAQStationsRemoteDataSource()
+        remoteDS.receivedList = MutableList(5) { sampleAQStation}
+
+        val localDS = MockLocalDataSource()
+        localDS.receivedList = emptyList()
+
+        val sut = AQStationsRepositoryImpl(
+            remoteDataSource = remoteDS,
+            localDataSource = localDS
+        )
+
+        //When
+        val actual = sut.getAll()
+
+        //Then
+        assertTrue(actual.count() == 5)
+        assertTrue(remoteDS.getAllInvocationsCount == 1)
+        assertTrue(localDS.getAllInvocationsCount == 1)
+    }
+
+    @Test fun localDStoreThrowsError() {
+        //Given remote return five values
+        val remoteDS = MockAQStationsRemoteDataSource()
+        remoteDS.receivedList = MutableList(5) { sampleAQStation}
+
+        //And local throws an error during storing data
+        val localDS = MockLocalDataSource()
+        localDS.receivedList = emptyList()
+        localDS.storeException = IllegalStateException()
+
+        val sut = AQStationsRepositoryImpl(
+            remoteDataSource = remoteDS,
+            localDataSource = localDS
+        )
+
+        //When calling getAll() on repository
+        val actual = sut.getAll()
+
+        //Then repository return five values
+        assertTrue(actual.count() == 5)
+        assertTrue(localDS.storeInvocationCount == 1)
+        assertTrue(remoteDS.getAllInvocationsCount == 1)
+        assertTrue(localDS.getAllInvocationsCount == 1)
     }
 }
 
@@ -53,14 +90,19 @@ class MockAQStationsRemoteDataSource: RemoteAQStationsDataSource {
 
 class MockLocalDataSource: LocalAQStationsDataSource {
     var receivedList: List<AQStation> = emptyList()
+    var getAllInvocationsCount: Int = 0
 
     override fun getAll(): List<AQStation> {
+        getAllInvocationsCount++
         return  receivedList
     }
 
+    var storeInvocationCount: Int = 0
+    var storeException: Exception? = null
     override fun store(stations: List<AQStation>) {
+        storeInvocationCount++
+        storeException?.let { throw it }
     }
-
 }
 
 val sampleAQStation = AQStation(

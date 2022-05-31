@@ -3,7 +3,6 @@ package com.matteozajac.airqualityexcercise.data.repositories
 import com.matteozajac.airqualityexcercise.entities.AQSponsor
 import com.matteozajac.airqualityexcercise.entities.AQStation
 import com.matteozajac.airqualityexcercise.logic.repositories.AQStationsRepository
-import java.lang.IllegalStateException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -17,7 +16,11 @@ class AQStationsRepositoryImpl @Inject constructor(
     override fun getAll(): List<AQStation> {
         return if (localDataSource.getAll().isEmpty()) {
             val stationsFromRemote = remoteDataSource.getAll()
-            localDataSource.store(stationsFromRemote)
+            try {
+                localDataSource.store(stationsFromRemote)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
             stationsFromRemote
         } else {
             localDataSource.getAll()
@@ -28,6 +31,8 @@ class AQStationsRepositoryImpl @Inject constructor(
         throw  IllegalStateException()
     }
 }
+
+//********************************************************************************************************
 
 interface RemoteAQStationsDataSource {
     fun getAll(): List<AQStation>
